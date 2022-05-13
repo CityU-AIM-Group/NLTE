@@ -186,7 +186,11 @@ class CategoryAwareDAHEAD(torch.nn.Module):
                 # generate batch-wise label and target prototype transition matrix
                 bwl_ptyps = torch.zeros_like(source_prototypes)
                 bwl_ptyps_cls_count = torch.zeros(C).to(bwl_ptyps.device)
-                for idx, cls in enumerate(list(labels)):
+                for idx, cls in enumerate(list(labels)):                    
+                    if cls == -10:
+                        source_feature_mapped_cur = source_feature_mapped[idx].repeat(bwl_ptyps.size()[0], 1)
+                        source_feature_mapped_cur = F.cosine_similarity(bwl_ptyps, source_feature_mapped_cur)
+                        cls = torch.argmax(source_feature_mapped_cur)
                     bwl_ptyps[cls] += source_feature_mapped[idx]
                     bwl_ptyps_cls_count[cls] += 1
                 exist_indx = bwl_ptyps_cls_count.type(torch.bool)
