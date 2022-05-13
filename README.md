@@ -96,11 +96,11 @@ python make_sym_noise.py
 
 Train:
 ```
-python -m torch.distributed.launch --nproc_per_node=$NGPUS /path_to_maskrcnn_benchmark/tools/train_net.py --config-file "path/to/config/file.yaml" DATASETS.ANNOTATIONS Noisy_Annotations_per_$NOISYRATE
+python -m torch.distributed.launch --nproc_per_node=$NGPUS ./tools/train_net.py --config-file "path/to/config/file.yaml" DATASETS.ANNOTATIONS Noisy_Annotations_per_$NOISYRATE
 ```
 Test:
 ```
-python /path_to_maskrcnn_benchmark/tools/train_net.py --config-file "path/to/config/file.yaml" MODEL.WEIGHT $YOURWEIGHT
+python ./tools/train_net.py --config-file "path/to/config/file.yaml" MODEL.WEIGHT $YOURWEIGHT SOLVER.TEST_ONLY True
 ```
 The trained models are provided in [Google Drive](https://drive.google.com/drive/folders/1Yq4lPTH2cIs5156uLMItTBa8kA-YZ34I?usp=sharing)
                                       
