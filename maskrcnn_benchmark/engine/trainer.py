@@ -238,7 +238,7 @@ def do_da_train(
         if cfg.MODEL.NOISEGRADMATCH_ON: # Fish
             if iteration % cfg.SOLVER.VAL_ITER == 0 and iteration > 0:
                 logger.info('----------------------------- Evaluating MODEL2 -----------------------------')
-                evaluate_during_training(cfg, model2)
+                cur_map = evaluate_during_training(cfg, model2)
                 if os.path.exists(os.path.join(cfg.OUTPUT_DIR, "result.txt")):
                     with open(os.path.join(cfg.OUTPUT_DIR, "result.txt"), "r") as f:
                         cur_map = float(f.readline()[5:]) # mAP: 
@@ -253,13 +253,13 @@ def do_da_train(
                 # model2.train()
             if iteration == max_iter-1:
                 logger.info('---------------------- EVALUATING FINAL OUTER MODEL -----------------------')
-                evaluate_during_training(cfg, model2)
+                cur_map = evaluate_during_training(cfg, model2)
                 save_model_only(model2, os.path.join(cfg.OUTPUT_DIR, "model_final.pth"))
                 # checkpointer.save("model_final", **arguments)
         else:
             if iteration % cfg.SOLVER.VAL_ITER == 0 and iteration > 0:
                 logger.info('----------------------------- Evaluating MODEL1 -----------------------------')
-                evaluate_during_training(cfg, model)
+                cur_map = evaluate_during_training(cfg, model)
                 if os.path.exists(os.path.join(cfg.OUTPUT_DIR, "result.txt")):
                     with open(os.path.join(cfg.OUTPUT_DIR, "result.txt"), "r") as f:
                         cur_map = float(f.readline()[5:]) # mAP: 

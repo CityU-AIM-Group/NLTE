@@ -109,16 +109,31 @@ def evaluate_during_training(cfg, model, distributed=False):
     dataset_names = cfg.DATASETS.TEST
     data_loaders_val = make_data_loader(cfg, is_train=False, is_distributed=distributed)
     for  dataset_name, data_loader_val in zip( dataset_names, data_loaders_val):
-        inference(
-            model,
-            data_loader_val,
-            dataset_name=dataset_name,
-            iou_types=iou_types,
-            box_only=False if cfg.MODEL.RETINANET_ON else cfg.MODEL.RPN_ONLY,
-            device=cfg.MODEL.DEVICE,
-            expected_results=cfg.TEST.EXPECTED_RESULTS,
-            expected_results_sigma_tol=cfg.TEST.EXPECTED_RESULTS_SIGMA_TOL,
-            output_folder=cfg.OUTPUT_DIR,
-        )
-        synchronize()
-    return True
+        if 'coco' in dataset_name:
+            results, _ = inference(
+                model,
+                data_loader_val,
+                dataset_name=dataset_name,
+                iou_types=iou_types,
+                box_only=False if cfg.MODEL.RETINANET_ON else cfg.MODEL.RPN_ONLY,
+                device=cfg.MODEL.DEVICE,
+                expected_results=cfg.TEST.EXPECTED_RESULTS,
+                expected_results_sigma_tol=cfg.TEST.EXPECTED_RESULTS_SIGMA_TOL,
+                output_folder=cfg.OUTPUT_DIR,
+            )
+            synchronize()
+            return results.results['bbox']['AP50']
+        else:
+            inference(
+                model,
+                data_loader_val,
+                dataset_name=dataset_name,
+                iou_types=iou_types,
+                box_only=False if cfg.MODEL.RETINANET_ON else cfg.MODEL.RPN_ONLY,
+                device=cfg.MODEL.DEVICE,
+                expected_results=cfg.TEST.EXPECTED_RESULTS,
+                expected_results_sigma_tol=cfg.TEST.EXPECTED_RESULTS_SIGMA_TOL,
+                output_folder=cfg.OUTPUT_DIR,
+            )
+            synchronize()
+            return 0.
